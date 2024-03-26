@@ -17,6 +17,8 @@ TaskHandle_t MQTTMonitor;
 
 #define PZEM_SERIAL Serial2
 
+#define Relay_Pin 5
+
 HardwareSerial sim(1); // RX, TX
 
 PZEM004Tv30 pzem(PZEM_SERIAL, PZEM_RX_PIN, PZEM_TX_PIN);
@@ -49,6 +51,9 @@ void setup() {
 
   setup_wifi();
 
+  pinMode(Relay_Pin, OUTPUT);
+  digitalWrite(Relay_Pin, LOW);
+  
   // Initialize MQTT
   mqttHandler.init(mqttServer, mqttPort, mqttUser, mqttPassword, deviceESN);
 
@@ -112,14 +117,14 @@ void loop() {
     delay(10000);
 }
 
-void SendMessage()
+void SendMessage(String Status)
 {
   Serial.println ("Sending Message");
   sim.println("AT+CMGF=1\r");    //Sets the GSM Module in Text Mode
   delay(100);
   sim.println("AT+CMGS=\"" + number + "\"\r"); //Mobile phone number to send message
   delay(500);
-  String SMS = "V:" + String(voltage) + " I:" + String(current) + " P:" + String(power) + " E:" + String(energy);
+  String SMS = Status + " V:" + String(voltage) + " I:" + String(current) + " P:" + String(power) + " E:" + String(energy);
   sim.println(SMS);
   delay(500);
   sim.println((char)26);// ASCII code of CTRL+Z

@@ -47,7 +47,10 @@ void MQTTMonitor_Routine( void * pvParameters ){
           
         }
         else if(incomingTopic == "P003_Detection"){
-          SendMessage();   
+          //send message when theft is detected
+          SendMessage(incomingPayload);   
+          //switch relay when theft is detected
+          digitalWrite(Relay_Pin, HIGH);
           }
   
         // Clear the flag after processing the message
